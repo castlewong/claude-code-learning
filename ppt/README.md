@@ -1,81 +1,47 @@
-# ppt/ — Presentation Content Folder
+# ppt/ — Remotion Learning Folder
 
-Put your presentation content here as `.md` files.
-Claude Code will read them and build a Remotion project (animated slides or video).
+This folder is for learning and practicing **Remotion** — a framework that lets you build animations and videos using React code.
 
----
-
-## How to Use
-
-1. Create a `.md` file here (e.g. `my-talk.md`)
-2. Write your slides using the format below
-3. Tell Claude: "build a Remotion presentation from `ppt/my-talk.md`"
-4. Claude scaffolds the project, you run `npm run dev` to preview
+Instead of editing in a timeline app, you write code. Every frame is a React component.
 
 ---
 
-## File Format
+## Learning Path
 
-```markdown
----
-title: Your Presentation Title
-style: dark-minimal
-fps: 30
-slide_duration: 150
-transition: fade
----
+Go in this order:
 
-# First Slide
-What you want to say on the first slide.
+| Step | What | Where |
+|------|------|-------|
+| 1 | Understand the concept | [`01-fundamentals.md`](01-fundamentals.md) |
+| 2 | Learn animation tools | [`02-animation.md`](02-animation.md) |
+| 3 | Try a practice project | [`03-projects.md`](03-projects.md) |
+| 4 | Study real examples | See GitHub repos in `03-projects.md` |
 
 ---
 
-# Second Slide
-- First bullet point
-- Second bullet point
-- Third bullet point
+## Quick Start
 
----
+```bash
+# Create a new Remotion project
+npx create-video@latest
 
-# A Code Example
-```tsx
-const opacity = interpolate(frame, [0, 30], [0, 1]);
+# Choose "Hello World" template
+# Then:
+cd my-video
+npm run dev         # opens Studio at localhost:3000
 ```
 
----
-
-# Summary
-Key takeaway goes here.
-```
+The Studio is a scrubber — drag the playhead to see your animation at any frame.
 
 ---
 
-## Frontmatter Options
+## Best Free Resources
 
-| Option | What it does | Choices |
-|--------|-------------|---------|
-| `style` | Visual look and feel | `dark-minimal`, `light-editorial`, `brutalist`, `gradient-bold` |
-| `fps` | Frames per second | `24`, `30`, `60` |
-| `slide_duration` | How long each slide shows | frames — 150 = 5 seconds at 30fps |
-| `transition` | Animation between slides | `fade`, `slide`, `wipe`, `none` |
-
----
-
-## Visual Styles
-
-| Style | Looks like |
-|-------|-----------|
-| `dark-minimal` | Dark background, red accent, serif font — like a premium tech talk |
-| `light-editorial` | Cream background, navy accent, magazine-like |
-| `brutalist` | Black and white, bold, raw |
-| `gradient-bold` | Deep blue gradient, glowing accent — dramatic |
-
----
-
-## Output Options
-
-- **Browser slides** — Opens in Remotion Studio, plays like a slideshow
-- **MP4 video** — Fully rendered video file, shareable anywhere
-- **Still image** — Export any single slide as a PNG
-
-Ask Claude which output you want when you kick off the build.
+| Resource | What it is |
+|----------|-----------|
+| [remotion.dev/docs](https://www.remotion.dev/docs) | Official docs — start with "The Fundamentals" |
+| [Fireship YouTube](https://www.youtube.com/watch?v=deg8bOoziaE) | Fast 5-min overview |
+| [notJust.dev 52-min workshop](https://www.youtube.com/watch?v=szh2MSqF8AY) | Best free video course, with Remotion's founder |
+| [Prismic tutorial](https://prismic.io/blog/create-videos-with-code-remotion-tutorial) | End-to-end project tutorial |
+| [Apple Fireworks tutorial](https://www.remotion.dev/learn/apple-wow) | Official beginner project |
+| [remotion.dev/discord](https://remotion.dev/discord) | Community, founder is active |
