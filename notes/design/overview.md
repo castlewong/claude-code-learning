@@ -66,6 +66,20 @@ Claude will read this file and follow your rules automatically.
 
 ---
 
+## Claude Code vs. Other Design Tools
+
+People often compare Claude Code to tools like v0 or Bolt. Here's the difference:
+
+| Tool | Best for | Limitation |
+|------|----------|-----------|
+| **v0 / Bolt / Lovable** | Fast throwaway prototypes | Outputs generic code that doesn't fit your real project |
+| **Claude Code** | Production-ready work inside your actual codebase | Requires more setup and better prompts |
+| **Claude Code + Figma MCP** | Turning Figma designs into real code | Needs Figma setup; occasional errors |
+
+The key difference: Claude Code reads your actual files, components, and tokens — so the code it writes fits your project. v0-style tools generate fresh generic code that often can't be reused as-is.
+
+---
+
 ## Key Insight
 
 > Claude knows *how* to make things beautiful — it has learned from millions of designs. The problem is it defaults to the average. Your job is to push it away from that center.

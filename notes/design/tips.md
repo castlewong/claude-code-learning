@@ -117,6 +117,85 @@ Less is more with design effects. Ask Claude for *one* great visual moment rathe
 
 ---
 
+## Tip 9: Use the Master Aesthetics Prompt in CLAUDE.md
+
+This is an official Anthropic-recommended block you can paste directly into your project's `CLAUDE.md` file. It permanently resets Claude's design defaults for that project.
+
+```
+You tend to converge toward generic, "on distribution" outputs. In frontend
+design, this creates what users call the "AI slop" aesthetic. Avoid this:
+make creative, distinctive frontends that surprise and delight. Focus on:
+
+Typography: Choose fonts that are beautiful, unique, and interesting.
+Avoid generic fonts like Arial and Inter; opt for distinctive choices.
+
+Color & Theme: Commit to a cohesive aesthetic. Use CSS variables for
+consistency. Dominant colors with sharp accents outperform timid,
+evenly-distributed palettes. Draw from IDE themes and cultural aesthetics.
+
+Motion: Use CSS-only animations for HTML. Use Motion library for React.
+One well-orchestrated page load with staggered reveals (animation-delay)
+creates more delight than scattered micro-interactions.
+
+Backgrounds: Layer CSS gradients, use geometric patterns, add contextual
+effects. Never default to solid white.
+
+Avoid: Inter, Roboto, Arial, purple gradients on white, predictable card
+layouts, cookie-cutter patterns.
+```
+
+Source: [Anthropic Cookbook — Prompting for Frontend Aesthetics](https://platform.claude.com/cookbook/coding-prompting-for-frontend-aesthetics)
+
+---
+
+## Tip 10: Choose Fonts Deliberately
+
+**Never use** (Claude's boring defaults):
+Inter, Roboto, Open Sans, Lato, Arial
+
+**Use these instead:**
+
+| Style | Font options |
+|-------|-------------|
+| Editorial / literary | Playfair Display, Fraunces, Crimson Pro |
+| Technical / code feel | JetBrains Mono, IBM Plex, Space Grotesk |
+| Modern startup | Clash Display, Satoshi, Cabinet Grotesk |
+| Distinctive | Bricolage Grotesque, Newsreader |
+
+**Pairing tip:** High contrast = interesting. Try display serif + monospace, or use extreme weights (thin 100 vs black 900) rather than subtle differences. Use size jumps of 3x or more between headings and body text.
+
+---
+
+## Tip 11: Let Claude Screenshot and Self-Correct
+
+Claude Code can take a screenshot of the UI it just built, look at it, and fix problems — like a person checking their own work.
+
+Prompt Claude to do this automatically:
+
+```
+"After making any CSS change, take a screenshot of the page at 375px,
+768px, and 1440px widths. Check that the layout doesn't break at any size
+before moving on."
+```
+
+This is especially useful for catching responsive design issues without you having to resize the browser yourself.
+
+---
+
+## Tip 12: Use a Fresh Session to Review Design
+
+When Claude has been writing code for a while, it gets "attached" to its own work and becomes a less critical reviewer. Open a new Claude Code session with no prior context and ask it to review:
+
+```
+"Review this component file for visual design quality. Flag: typography
+choices, color token usage, spacing consistency, and anything that looks
+generic or off-brand."
+```
+
+A fresh session gives sharper, more honest feedback.
+
+---
+
 ## Common Mistakes to Avoid
 
 | Mistake | Why it's a problem |
