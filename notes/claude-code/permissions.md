@@ -22,7 +22,9 @@ Set via `"defaultMode"` in `settings.json`:
 |------|-------------|
 | `"default"` | Asks before everything |
 | `"acceptEdits"` | Auto-accepts file read/write, asks before running commands |
-| `"acceptAll"` | Auto-accepts everything — no prompts at all |
+| `"bypassPermissions"` | Skips all permission prompts — fully automatic |
+| `"dontAsk"` | Similar to bypassPermissions |
+| `"auto"` | Claude decides what needs approval |
 
 ---
 
@@ -36,7 +38,7 @@ Edit `~/.claude/settings.json`:
     "allow": [
       "Bash(*)"
     ],
-    "defaultMode": "acceptAll"
+    "defaultMode": "bypassPermissions"
   }
 }
 ```
