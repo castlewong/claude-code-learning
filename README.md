@@ -23,6 +23,7 @@ Notes on using Claude Code — Anthropic's AI coding assistant CLI.
 | File | What it covers |
 |------|----------------|
 | [notes/claude-code/basics.md](notes/claude-code/basics.md) | What Claude Code is, how to start, key commands |
+| [notes/claude-code/permissions.md](notes/claude-code/permissions.md) | How to pre-allow permissions globally so Claude never asks |
 
 ### Tools & Software
 Notes on specific tools I've learned about.
@@ -54,6 +55,7 @@ A chronological record of what I've learned, newest first.
 
 | Date | What I learned |
 |------|----------------|
+| 2026-03-23 | How to pre-allow all Claude Code permissions globally (`defaultMode: acceptAll`) |
 | 2026-03-23 | Set up this knowledge base repo |
 | 2026-03-23 | Learned about gstack — a Claude Code workflow system |
 | 2026-03-23 | Learned about Remotion — create videos using React |
