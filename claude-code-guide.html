@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code: From Beginner to Master</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* === CSS CUSTOM PROPERTIES === */
+:root {
+  --bg-primary: #1a1a1a;
+  --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #242424 50%, #1a1a1a 100%);
+  --card-orange: #FF5722;
+  --text-white: #ffffff;
+  --text-muted: rgba(255,255,255,0.55);
+  --text-on-orange: #1a1a1a;
+  --font-display: 'Archivo Black', sans-serif;
+  --font-body: 'Space Grotesk', sans-serif;
+  --title-size: clamp(1.5rem, 5vw, 4rem);
+  --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+  --body-size: clamp(0.75rem, 1.5vw, 1.05rem);
+  --small-size: clamp(0.6rem, 1vw, 0.82rem);
+  --slide-padding: clamp(1rem, 4vw, 4rem);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* === RESET === */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===== VIEWPORT BASE CSS ===== */
+html, body { height: 100%; overflow-x: hidden; }
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+.slide {
+  width: 100vw; height: 100vh; height: 100dvh;
+  overflow: hidden; scroll-snap-align: start;
+  display: flex; flex-direction: column; position: relative;
+}
+.slide-content {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center; max-height: 100%; overflow: hidden;
+  padding: var(--slide-padding);
+}
+.card, .container, .content-box {
+  max-width: min(90vw, 1000px); max-height: min(80vh, 700px);
+}
+img, .image-container { max-width: 100%; max-height: min(50vh, 400px); object-fit: contain; }
+
+@media (max-height: 700px) {
+  :root {
+    --slide-padding: clamp(0.75rem, 3vw, 2rem);
+    --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+    --h2-size: clamp(1rem, 3vw, 1.75rem);
+  }
+}
+@media (max-height: 600px) {
+  :root {
+    --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+    --title-size: clamp(1.1rem, 4vw, 2rem);
+    --body-size: clamp(0.7rem, 1.2vw, 0.9rem);
+  }
+  .nav-dots, .keyboard-hint, .decorative { display: none; }
+}
+@media (max-height: 500px) {
+  :root {
+    --slide-padding: clamp(0.4rem, 2vw, 1rem);
+    --title-size: clamp(1rem, 3.5vw, 1.5rem);
+    --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+    --body-size: clamp(0.65rem, 1vw, 0.85rem);
+  }
+}
+@media (max-width: 600px) { :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+  html { scroll-behavior: auto; }
+}
+/* ===== END VIEWPORT BASE ===== */
+
+body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-white); }
+
+/* === PROGRESS BAR === */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: var(--card-orange); z-index: 1000; width: 0%;
+  transition: width 0.35s ease;
+}
+
+/* === NAV DOTS (right side) === */
+.nav-dots {
+  position: fixed; right: clamp(0.8rem, 2vw, 1.5rem); top: 50%;
+  transform: translateY(-50%); z-index: 1000;
+  display: flex; flex-direction: column; gap: clamp(0.4rem, 0.8vh, 0.7rem);
+}
+.nav-dot {
+  width: clamp(5px, 0.5vw, 7px); height: clamp(5px, 0.5vw, 7px);
+  border-radius: 50%; background: rgba(255,255,255,0.2);
+  cursor: pointer; transition: all 0.3s ease; border: none; padding: 0;
+}
+.nav-dot.active { background: var(--card-orange); transform: scale(1.5); }
+.nav-dot:hover { background: rgba(255,255,255,0.5); }
+
+/* === KEYBOARD HINT === */
+.keyboard-hint {
+  position: fixed; bottom: clamp(0.8rem, 1.5vw, 1.5rem);
+  left: 50%; transform: translateX(-50%);
+  font-size: var(--small-size); color: rgba(255,255,255,0.18);
+  letter-spacing: 0.08em; z-index: 100; pointer-events: none;
+}
+
+/* === SLIDE BACKGROUNDS === */
+.slide { background: var(--bg-gradient); }
+
+/* === DECORATIVE VERTICAL LINES === */
+.v-line {
+  position: absolute; top: 0; width: 1px; height: 100%;
+  background: rgba(255,255,255,0.03);
+}
+.v-line-1 { right: 28%; }
+.v-line-2 { right: 14%; }
+
+/* === CORNER LABELS === */
+.slide-num {
+  position: absolute; top: var(--slide-padding); left: var(--slide-padding);
+  font-family: var(--font-display); font-size: var(--small-size);
+  color: var(--card-orange); letter-spacing: 0.15em; z-index: 10;
+}
+.slide-label {
+  position: absolute; top: var(--slide-padding);
+  right: calc(var(--slide-padding) + clamp(1.5rem, 3vw, 2.5rem));
+  font-size: var(--small-size); color: var(--text-muted);
+  letter-spacing: 0.1em; text-transform: uppercase; z-index: 10;
+}
+
+/* === REVEAL ANIMATIONS === */
+.reveal { opacity: 0; transform: translateY(25px); transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo); }
+.reveal-scale { opacity: 0; transform: scale(0.93); transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo); }
+.slide.visible .reveal, .slide.visible .reveal-scale { opacity: 1; transform: none; }
+
+/* Stagger delays */
+.d1 { transition-delay: 0.05s; }
+.d2 { transition-delay: 0.15s; }
+.d3 { transition-delay: 0.25s; }
+.d4 { transition-delay: 0.35s; }
+.d5 { transition-delay: 0.45s; }
+.d6 { transition-delay: 0.55s; }
+
+/* === ORANGE SECTION HEADER === */
+.orange-header {
+  background: var(--card-orange);
+  padding: clamp(0.7rem, 1.6vw, 1.4rem) var(--slide-padding);
+  flex-shrink: 0;
+}
+.orange-header h2 { font-family: var(--font-display); font-size: var(--h2-size); color: #1a1a1a; line-height: 1.1; }
+.orange-header .sub-text { font-size: var(--small-size); color: rgba(26,26,26,0.6); margin-top: clamp(0.1rem, 0.3vw, 0.25rem); }
+
+/* === SLIDE BODY === */
+.slide-body {
+  padding: clamp(0.6rem, 1.5vw, 1.5rem) var(--slide-padding);
+  flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden;
+}
+
+/* === BULLET LIST === */
+ul.clean-list {
+  list-style: none; padding: 0;
+  display: flex; flex-direction: column;
+  gap: clamp(0.4rem, 1.2vh, 0.9rem);
+}
+ul.clean-list li {
+  display: flex; align-items: flex-start;
+  gap: clamp(0.5rem, 1vw, 0.9rem);
+  font-size: var(--body-size); line-height: 1.5; color: rgba(255,255,255,0.85);
+}
+ul.clean-list li .marker {
+  flex-shrink: 0; width: clamp(5px, 0.6vw, 8px); height: clamp(5px, 0.6vw, 8px);
+  background: var(--card-orange); border-radius: 2px; margin-top: clamp(0.3rem, 0.5vw, 0.42rem);
+}
+ul.clean-list li strong { color: var(--text-white); font-weight: 600; }
+
+/* === 2×2 GRID === */
+.grid-2x2 {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(0.4rem, 1vw, 0.9rem);
+  max-height: min(68vh, 520px);
+}
+.grid-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+  padding: clamp(0.6rem, 1.3vw, 1.2rem);
+  display: flex; flex-direction: column; gap: clamp(0.15rem, 0.4vw, 0.4rem);
+}
+.grid-card .gc-num { font-family: var(--font-display); font-size: clamp(0.75rem, 1.6vw, 1.2rem); color: var(--card-orange); }
+.grid-card .gc-title { font-family: var(--font-display); font-size: clamp(0.75rem, 1.4vw, 1rem); color: var(--text-white); }
+.grid-card .gc-body { font-size: var(--small-size); color: var(--text-muted); line-height: 1.5; }
+
+/* === STEP LIST === */
+.step-list {
+  list-style: none; padding: 0;
+  display: flex; flex-direction: column;
+  gap: clamp(0.5rem, 1.4vh, 1.1rem);
+}
+.step-list li { display: flex; align-items: flex-start; gap: clamp(0.6rem, 1.2vw, 1.1rem); }
+.step-num {
+  flex-shrink: 0; font-family: var(--font-display);
+  font-size: clamp(1rem, 2.2vw, 1.8rem); color: var(--card-orange);
+  line-height: 1; min-width: clamp(1.4rem, 2.8vw, 2.2rem);
+}
+.step-text .step-title { font-size: var(--body-size); font-weight: 600; color: var(--text-white); margin-bottom: clamp(0.1rem, 0.25vw, 0.2rem); }
+.step-text .step-body { font-size: var(--small-size); color: var(--text-muted); line-height: 1.5; }
+
+/* === CODE BOX === */
+.code-box {
+  background: rgba(0,0,0,0.5); border: 1px solid rgba(255,87,34,0.2);
+  border-left: 3px solid var(--card-orange);
+  padding: clamp(0.6rem, 1.2vw, 1rem) clamp(0.8rem, 1.5vw, 1.2rem);
+  font-family: 'Courier New', monospace; font-size: var(--small-size);
+  color: rgba(255,255,255,0.75); max-height: min(32vh, 240px); overflow: hidden;
+  line-height: 1.7;
+}
+.code-box .prompt { color: var(--card-orange); font-weight: bold; }
+.code-box .comment { color: rgba(255,255,255,0.32); }
+.code-box .output { color: rgba(255,255,255,0.6); }
+
+/* === 3-COLUMN CARDS === */
+.three-col {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: clamp(0.5rem, 1.3vw, 1.3rem);
+  max-height: min(62vh, 480px);
+}
+.three-card { display: flex; flex-direction: column; gap: clamp(0.3rem, 0.7vw, 0.6rem); }
+.three-card .tc-icon {
+  font-family: var(--font-display); font-size: clamp(0.65rem, 1.1vw, 0.85rem);
+  background: var(--card-orange); color: #1a1a1a;
+  width: clamp(2rem, 3.5vw, 2.8rem); height: clamp(2rem, 3.5vw, 2.8rem);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.three-card .tc-title { font-family: var(--font-display); font-size: clamp(0.85rem, 1.6vw, 1.2rem); color: var(--text-white); }
+.three-card .tc-body { font-size: var(--small-size); color: var(--text-muted); line-height: 1.6; }
+
+/* === COMMAND GRID === */
+.cmd-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(0.3rem, 0.7vw, 0.6rem);
+}
+.cmd-item {
+  display: flex; align-items: flex-start; gap: clamp(0.4rem, 0.8vw, 0.7rem);
+  padding: clamp(0.4rem, 0.8vw, 0.65rem) clamp(0.5rem, 1vw, 0.9rem);
+  background: rgba(255,87,34,0.06); border-left: 2px solid rgba(255,87,34,0.3);
+}
+.cmd-name {
+  font-family: 'Courier New', monospace; font-size: var(--small-size);
+  color: var(--card-orange); font-weight: 700; flex-shrink: 0;
+  min-width: clamp(3.5rem, 6.5vw, 5.5rem);
+}
+.cmd-desc { font-size: var(--small-size); color: var(--text-muted); line-height: 1.4; }
+
+/* === HIGHLIGHT BOX === */
+.highlight-box {
+  background: var(--card-orange);
+  padding: clamp(0.7rem, 1.5vw, 1.3rem);
+  flex-shrink: 0;
+}
+.highlight-box p { font-size: var(--body-size); color: #1a1a1a; line-height: 1.55; font-weight: 500; }
+
+/* === ROADMAP (slide 16) === */
+.roadmap { display: flex; gap: clamp(0.5rem, 1.3vw, 1.3rem); max-height: min(52vh, 400px); }
+.stage {
+  flex: 1; border: 1px solid rgba(255,255,255,0.08);
+  padding: clamp(0.7rem, 1.5vw, 1.3rem);
+  display: flex; flex-direction: column; gap: clamp(0.25rem, 0.5vw, 0.5rem);
+}
+.stage.active { border-color: var(--card-orange); background: rgba(255,87,34,0.07); }
+.stage-label { font-family: var(--font-display); font-size: var(--small-size); color: var(--card-orange); letter-spacing: 0.1em; text-transform: uppercase; }
+.stage-title { font-family: var(--font-display); font-size: clamp(0.85rem, 1.7vw, 1.25rem); color: var(--text-white); }
+.stage-items { list-style: none; padding: 0; display: flex; flex-direction: column; gap: clamp(0.2rem, 0.45vw, 0.38rem); }
+.stage-items li { font-size: var(--small-size); color: var(--text-muted); line-height: 1.4; }
+.stage-items li::before { content: '→ '; color: var(--card-orange); }
+
+/* ========================
+   SLIDE 01 — TITLE specific
+   ======================== */
+.title-slide .title-inner {
+  position: absolute; bottom: var(--slide-padding);
+  left: var(--slide-padding); right: calc(var(--slide-padding) + clamp(2rem, 5vw, 5rem));
+}
+.title-card {
+  background: var(--card-orange);
+  padding: clamp(1.4rem, 3.2vw, 2.8rem);
+  max-width: min(85vw, 780px);
+}
+.title-card .eyebrow {
+  font-size: var(--small-size); color: rgba(26,26,26,0.6);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  font-weight: 500; margin-bottom: clamp(0.3rem, 0.7vw, 0.6rem);
+}
+.title-card h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7vw, 5.5rem);
+  color: #1a1a1a; line-height: 0.95;
+  margin-bottom: clamp(0.4rem, 0.9vw, 0.8rem);
+}
+.title-card .sub { font-size: clamp(0.75rem, 1.5vw, 1.05rem); color: rgba(26,26,26,0.6); line-height: 1.55; }
+
+.title-nav {
+  position: absolute; top: var(--slide-padding);
+  right: calc(var(--slide-padding) + clamp(1.5rem, 3vw, 2.5rem));
+  display: flex; gap: clamp(0.35rem, 0.7vw, 0.6rem); align-items: center;
+}
+.title-nav span { font-size: var(--small-size); color: rgba(255,255,255,0.2); }
+.title-nav .t-active { color: var(--card-orange); }
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
+<div class="keyboard-hint">← → Space or scroll to navigate</div>
+
+<!-- ======================== SLIDE 01 — TITLE ======================== -->
+<section class="slide title-slide" id="slide-1">
+  <div class="v-line v-line-1 decorative"></div>
+  <div class="v-line v-line-2 decorative"></div>
+  <span class="slide-num reveal d1">01 / 16</span>
+  <div class="title-nav">
+    <span class="t-active">Start</span>
+    <span>—</span>
+    <span>Master</span>
+  </div>
+  <div class="title-inner">
+    <div class="title-card reveal d2">
+      <div class="eyebrow">Complete Tutorial · 2026</div>
+      <h1>Claude Code</h1>
+      <div class="sub">From Beginner to Master — no prior coding experience needed.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 02 — WHAT IS CLAUDE CODE ======================== -->
+<section class="slide" id="slide-2">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">02</span>
+  <span class="slide-label">Introduction</span>
+  <div class="orange-header reveal d1">
+    <h2>What is Claude Code?</h2>
+    <div class="sub-text">Your AI coding partner that lives in the terminal</div>
+  </div>
+  <div class="slide-body">
+    <ul class="clean-list">
+      <li class="reveal d2"><span class="marker"></span><span><strong>It's a CLI tool</strong> — runs in your terminal on Mac, Windows, or Linux</span></li>
+      <li class="reveal d3"><span class="marker"></span><span><strong>Understands plain English</strong> — describe what you want, it writes the code</span></li>
+      <li class="reveal d4"><span class="marker"></span><span><strong>Takes real actions</strong> — reads, writes, and edits files and runs commands for you</span></li>
+      <li class="reveal d5"><span class="marker"></span><span><strong>Shows its work</strong> — every action is displayed before it runs</span></li>
+      <li class="reveal d6"><span class="marker"></span><span><strong>You stay in control</strong> — approve or deny any action at any time</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 03 — WHY USE IT ======================== -->
+<section class="slide" id="slide-3">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">03</span>
+  <span class="slide-label">Why Bother</span>
+  <div class="orange-header reveal d1">
+    <h2>Why Use Claude Code?</h2>
+    <div class="sub-text">What changes for beginners and pros alike</div>
+  </div>
+  <div class="slide-body">
+    <div class="grid-2x2">
+      <div class="grid-card reveal-scale d2">
+        <div class="gc-num">01</div>
+        <div class="gc-title">No Experience Needed</div>
+        <div class="gc-body">Build real software without knowing every syntax. Focus on what you want, not how to type it.</div>
+      </div>
+      <div class="grid-card reveal-scale d3">
+        <div class="gc-num">02</div>
+        <div class="gc-title">10× Faster</div>
+        <div class="gc-body">Skip repetitive boilerplate. Claude writes the tedious parts so you focus on ideas.</div>
+      </div>
+      <div class="grid-card reveal-scale d4">
+        <div class="gc-num">03</div>
+        <div class="gc-title">Learn by Doing</div>
+        <div class="gc-body">Watch Claude explain every step — like pair-programming with a senior developer 24/7.</div>
+      </div>
+      <div class="grid-card reveal-scale d5">
+        <div class="gc-num">04</div>
+        <div class="gc-title">Real Projects</div>
+        <div class="gc-body">Build actual apps, automate tasks, work with real files and git — not toy examples.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 04 — GETTING STARTED ======================== -->
+<section class="slide" id="slide-4">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">04</span>
+  <span class="slide-label">Setup</span>
+  <div class="orange-header reveal d1">
+    <h2>Getting Started</h2>
+    <div class="sub-text">You'll be ready in under 5 minutes</div>
+  </div>
+  <div class="slide-body">
+    <ol class="step-list">
+      <li class="reveal d2">
+        <div class="step-num">01</div>
+        <div class="step-text">
+          <div class="step-title">Install Node.js</div>
+          <div class="step-body">Download from nodejs.org — this is the runtime Claude Code needs to run</div>
+        </div>
+      </li>
+      <li class="reveal d3">
+        <div class="step-num">02</div>
+        <div class="step-text">
+          <div class="step-title">Install Claude Code</div>
+          <div class="step-body">In your terminal: <code style="color:var(--card-orange);font-family:monospace">npm install -g @anthropic-ai/claude-code</code></div>
+        </div>
+      </li>
+      <li class="reveal d4">
+        <div class="step-num">03</div>
+        <div class="step-text">
+          <div class="step-title">Sign In</div>
+          <div class="step-body">Run <code style="color:var(--card-orange);font-family:monospace">claude</code> — it opens your browser to log in with your Anthropic account</div>
+        </div>
+      </li>
+      <li class="reveal d5">
+        <div class="step-num">04</div>
+        <div class="step-text">
+          <div class="step-title">Start a Session</div>
+          <div class="step-body">Navigate to any folder, type <code style="color:var(--card-orange);font-family:monospace">claude</code>, press Enter. You're in.</div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 05 — FIRST CONVERSATION ======================== -->
+<section class="slide" id="slide-5">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">05</span>
+  <span class="slide-label">First Steps</span>
+  <div class="orange-header reveal d1">
+    <h2>Your First Conversation</h2>
+    <div class="sub-text">Just type naturally — like texting a smart friend</div>
+  </div>
+  <div class="slide-body">
+    <div class="code-box reveal d2" style="margin-bottom:clamp(0.6rem,1.3vw,1.2rem)">
+      <div><span class="prompt">You: </span>create a file called hello.py that prints "Hello World"</div>
+      <div style="margin-top:0.35em"><span class="output">Claude: I'll create that for you.</span></div>
+      <div><span class="comment">  → Write: hello.py ✓</span></div>
+      <div><span class="comment">  → Bash: python hello.py</span></div>
+      <div><span class="output">  Hello World</span></div>
+    </div>
+    <ul class="clean-list reveal d3">
+      <li><span class="marker"></span><span><strong>Be specific</strong> — "create a blue button HTML file" beats "make a webpage"</span></li>
+      <li><span class="marker"></span><span><strong>Ask questions</strong> — "what does this code do?" works perfectly</span></li>
+      <li><span class="marker"></span><span><strong>Iterate</strong> — "make it bigger" / "change to red" / "add a title"</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 06 — THE CORE LOOP ======================== -->
+<section class="slide" id="slide-6">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">06</span>
+  <span class="slide-label">How It Works</span>
+  <div class="orange-header reveal d1">
+    <h2>The Core Loop</h2>
+    <div class="sub-text">How Claude Code approaches every single task</div>
+  </div>
+  <div class="slide-body">
+    <div class="three-col reveal d2" style="margin-bottom:clamp(0.5rem,1.2vw,1.1rem)">
+      <div class="three-card">
+        <div class="tc-icon">READ</div>
+        <div class="tc-title">Understand</div>
+        <div class="tc-body">Reads your files and understands the context before touching anything.</div>
+      </div>
+      <div class="three-card">
+        <div class="tc-icon">PLAN</div>
+        <div class="tc-title">Plan</div>
+        <div class="tc-body">Thinks through the best approach, considers edge cases, chooses tools.</div>
+      </div>
+      <div class="three-card">
+        <div class="tc-icon">ACT</div>
+        <div class="tc-title">Execute</div>
+        <div class="tc-body">Takes actions step by step, showing you every move in real time.</div>
+      </div>
+    </div>
+    <div class="highlight-box reveal d3">
+      <p>You're always in control. Every tool call is shown before it runs. Approve, deny, or redirect at any moment.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 07 — TOOL CALLS ======================== -->
+<section class="slide" id="slide-7">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">07</span>
+  <span class="slide-label">Tool Calls</span>
+  <div class="orange-header reveal d1">
+    <h2>Reading Tool Calls</h2>
+    <div class="sub-text">Claude shows its work — here's what you're seeing</div>
+  </div>
+  <div class="slide-body">
+    <div class="code-box reveal d2" style="margin-bottom:clamp(0.6rem,1.3vw,1.2rem)">
+      <div><span class="comment">// Claude shows these before running — you can approve or deny</span></div>
+      <div style="margin-top:0.4em"><span class="prompt">Read   </span><span class="output">→ app.py           </span><span class="comment">// looking at your file</span></div>
+      <div><span class="prompt">Edit   </span><span class="output">→ app.py line 42   </span><span class="comment">// making a change</span></div>
+      <div><span class="prompt">Bash   </span><span class="output">→ python app.py    </span><span class="comment">// running the code</span></div>
+      <div><span class="prompt">Write  </span><span class="output">→ README.md        </span><span class="comment">// creating a new file</span></div>
+    </div>
+    <ul class="clean-list reveal d3">
+      <li><span class="marker"></span><span><strong>Read / Glob / Grep</strong> — exploring your codebase (safe, no changes)</span></li>
+      <li><span class="marker"></span><span><strong>Edit / Write</strong> — modifying files (review the diff shown)</span></li>
+      <li><span class="marker"></span><span><strong>Bash</strong> — running real commands (these execute for real — read carefully)</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 08 — KEY COMMANDS ======================== -->
+<section class="slide" id="slide-8">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">08</span>
+  <span class="slide-label">Commands</span>
+  <div class="orange-header reveal d1">
+    <h2>Slash Commands</h2>
+    <div class="sub-text">Type these at any time during a session</div>
+  </div>
+  <div class="slide-body">
+    <div class="cmd-grid reveal d2">
+      <div class="cmd-item"><span class="cmd-name">/help</span><span class="cmd-desc">See all available commands and features</span></div>
+      <div class="cmd-item"><span class="cmd-name">/commit</span><span class="cmd-desc">Stage and commit changes with a smart message</span></div>
+      <div class="cmd-item"><span class="cmd-name">/clear</span><span class="cmd-desc">Clear conversation context — start fresh</span></div>
+      <div class="cmd-item"><span class="cmd-name">/review-pr</span><span class="cmd-desc">Get a detailed code review on a pull request</span></div>
+      <div class="cmd-item"><span class="cmd-name">/memory</span><span class="cmd-desc">View and manage what Claude remembers about you</span></div>
+      <div class="cmd-item"><span class="cmd-name">/bug</span><span class="cmd-desc">Report a Claude Code issue — opens GitHub</span></div>
+    </div>
+    <div class="highlight-box reveal d3" style="margin-top:clamp(0.5rem,1.2vw,1rem)">
+      <p>Type <strong>/help</strong> at any time to see every command. New ones are added regularly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 09 — BEGINNER WINS ======================== -->
+<section class="slide" id="slide-9">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">09</span>
+  <span class="slide-label">Beginner Moves</span>
+  <div class="orange-header reveal d1">
+    <h2>Your First 4 Tasks</h2>
+    <div class="sub-text">Try these today — each one teaches you something essential</div>
+  </div>
+  <div class="slide-body">
+    <ol class="step-list">
+      <li class="reveal d2">
+        <div class="step-num">01</div>
+        <div class="step-text">
+          <div class="step-title">"Create an HTML file that shows my name in big blue text"</div>
+          <div class="step-body">Teaches: file creation, HTML basics, opening in a browser</div>
+        </div>
+      </li>
+      <li class="reveal d3">
+        <div class="step-num">02</div>
+        <div class="step-text">
+          <div class="step-title">"Explain this code to me" (paste any code you find online)</div>
+          <div class="step-body">Teaches: how to read code, vocabulary, core concepts</div>
+        </div>
+      </li>
+      <li class="reveal d4">
+        <div class="step-num">03</div>
+        <div class="step-text">
+          <div class="step-title">"Write a Python script that asks my name and greets me"</div>
+          <div class="step-body">Teaches: input/output, running scripts, Python fundamentals</div>
+        </div>
+      </li>
+      <li class="reveal d5">
+        <div class="step-num">04</div>
+        <div class="step-text">
+          <div class="step-title">"Fix this bug" (share the exact error message you got)</div>
+          <div class="step-body">Teaches: debugging workflow, reading error messages, iteration</div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 10 — REAL PROJECTS ======================== -->
+<section class="slide" id="slide-10">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">10</span>
+  <span class="slide-label">Intermediate</span>
+  <div class="orange-header reveal d1">
+    <h2>Working on Real Projects</h2>
+    <div class="sub-text">When you're ready to go beyond single files</div>
+  </div>
+  <div class="slide-body">
+    <ul class="clean-list">
+      <li class="reveal d2"><span class="marker"></span><span><strong>Navigate first</strong> — run <code style="color:var(--card-orange);font-family:monospace">cd your-project</code> before starting Claude</span></li>
+      <li class="reveal d3"><span class="marker"></span><span><strong>Give context</strong> — "this is a React app for X, help me add Y"</span></li>
+      <li class="reveal d4"><span class="marker"></span><span><strong>Break it down</strong> — ask for one feature at a time, not everything at once</span></li>
+      <li class="reveal d5"><span class="marker"></span><span><strong>Review changes</strong> — Claude shows diffs; always read before approving file edits</span></li>
+      <li class="reveal d6"><span class="marker"></span><span><strong>Use git</strong> — commit working states so you can always roll back if something breaks</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 11 — CLAUDE.md ======================== -->
+<section class="slide" id="slide-11">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">11</span>
+  <span class="slide-label">Teaching Claude</span>
+  <div class="orange-header reveal d1">
+    <h2>CLAUDE.md — Your Project Manual</h2>
+    <div class="sub-text">A file that teaches Claude about your project — permanently</div>
+  </div>
+  <div class="slide-body">
+    <div class="code-box reveal d2" style="margin-bottom:clamp(0.5rem,1.2vw,1.1rem)">
+      <div><span class="comment"># CLAUDE.md — place in your project root folder</span></div>
+      <div style="margin-top:0.4em"><span class="output">This is a Next.js blog. Pages are in /pages.</span></div>
+      <div><span class="output">Always use TypeScript. Never use inline styles.</span></div>
+      <div><span class="output">Run `npm test` before committing any changes.</span></div>
+      <div><span class="output">Never log the API key stored in .env</span></div>
+    </div>
+    <ul class="clean-list reveal d3">
+      <li><span class="marker"></span><span>Claude reads CLAUDE.md <strong>automatically at the start of every session</strong></span></li>
+      <li><span class="marker"></span><span>Write your rules, conventions, and context here — it <strong>never forgets</strong> them</span></li>
+      <li><span class="marker"></span><span>A global one at <code style="color:var(--card-orange);font-family:monospace">~/.claude/CLAUDE.md</code> applies to <strong>all projects</strong></span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 12 — GIT ======================== -->
+<section class="slide" id="slide-12">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">12</span>
+  <span class="slide-label">Git</span>
+  <div class="orange-header reveal d1">
+    <h2>Git Integration</h2>
+    <div class="sub-text">Claude understands version control natively</div>
+  </div>
+  <div class="slide-body">
+    <div class="grid-2x2">
+      <div class="grid-card reveal-scale d2">
+        <div class="gc-num">/commit</div>
+        <div class="gc-title">Smart Commits</div>
+        <div class="gc-body">Claude stages your files and writes a meaningful commit message describing what changed and why.</div>
+      </div>
+      <div class="grid-card reveal-scale d3">
+        <div class="gc-num">PR</div>
+        <div class="gc-title">Pull Requests</div>
+        <div class="gc-body">Ask Claude to create a GitHub PR — it writes the title, summary, and test plan automatically.</div>
+      </div>
+      <div class="grid-card reveal-scale d4">
+        <div class="gc-num">DIFF</div>
+        <div class="gc-title">Code Review</div>
+        <div class="gc-body">"Review my changes before I commit" — Claude spots bugs and suggests improvements.</div>
+      </div>
+      <div class="grid-card reveal-scale d5">
+        <div class="gc-num">LOG</div>
+        <div class="gc-title">History Aware</div>
+        <div class="gc-body">Claude reads git history to understand what changed and why — making every suggestion smarter.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 13 — AGENTS ======================== -->
+<section class="slide" id="slide-13">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">13</span>
+  <span class="slide-label">Advanced</span>
+  <div class="orange-header reveal d1">
+    <h2>Agents &amp; Subagents</h2>
+    <div class="sub-text">Claude can spawn specialized helpers to work in parallel</div>
+  </div>
+  <div class="slide-body">
+    <ul class="clean-list">
+      <li class="reveal d2"><span class="marker"></span><span>An <strong>Agent</strong> is Claude spawning a second Claude to handle a subtask autonomously</span></li>
+      <li class="reveal d3"><span class="marker"></span><span>Useful for <strong>big tasks</strong> — search the codebase AND run tests at the same time</span></li>
+      <li class="reveal d4"><span class="marker"></span><span>Specialized types: <strong>Explore</strong> (search code), <strong>Plan</strong> (architecture), <strong>general</strong> (anything)</span></li>
+      <li class="reveal d5"><span class="marker"></span><span>You don't trigger agents manually — Claude decides <strong>when they help</strong></span></li>
+    </ul>
+    <div class="highlight-box reveal d6">
+      <p>Think of agents as a team: Claude is the manager, subagents are specialists. You just give the goal.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 14 — MCP & HOOKS ======================== -->
+<section class="slide" id="slide-14">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">14</span>
+  <span class="slide-label">Power Features</span>
+  <div class="orange-header reveal d1">
+    <h2>MCP Servers &amp; Hooks</h2>
+    <div class="sub-text">Connect Claude to any external tool or system</div>
+  </div>
+  <div class="slide-body">
+    <div class="grid-2x2">
+      <div class="grid-card reveal-scale d2">
+        <div class="gc-num">MCP</div>
+        <div class="gc-title">External Connections</div>
+        <div class="gc-body">Connect Claude to browsers, databases, Slack, GitHub — anything with an MCP server.</div>
+      </div>
+      <div class="grid-card reveal-scale d3">
+        <div class="gc-num">HOOKS</div>
+        <div class="gc-title">Automation</div>
+        <div class="gc-body">Run shell commands automatically on events — e.g., run tests every time Claude edits a file.</div>
+      </div>
+      <div class="grid-card reveal-scale d4">
+        <div class="gc-num">MEMORY</div>
+        <div class="gc-title">Persistent Memory</div>
+        <div class="gc-body">Claude remembers your preferences, project context, and feedback across every session.</div>
+      </div>
+      <div class="grid-card reveal-scale d5">
+        <div class="gc-num">SKILLS</div>
+        <div class="gc-title">Custom Commands</div>
+        <div class="gc-body">Define your own slash commands that trigger complex multi-step workflows with one word.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 15 — MASTER MINDSET ======================== -->
+<section class="slide" id="slide-15">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">15</span>
+  <span class="slide-label">Think Different</span>
+  <div class="orange-header reveal d1">
+    <h2>The Master Mindset</h2>
+    <div class="sub-text">How experts think when working with Claude</div>
+  </div>
+  <div class="slide-body">
+    <ul class="clean-list">
+      <li class="reveal d2"><span class="marker"></span><span><strong>Think in goals, not syntax</strong> — "I want users to log in" not "write a JWT function"</span></li>
+      <li class="reveal d3"><span class="marker"></span><span><strong>Iterate relentlessly</strong> — every response is a starting point, not a final answer</span></li>
+      <li class="reveal d4"><span class="marker"></span><span><strong>Read what Claude does</strong> — the best learning happens by watching it work</span></li>
+      <li class="reveal d5"><span class="marker"></span><span><strong>Teach Claude your standards</strong> — CLAUDE.md + feedback makes it smarter every session</span></li>
+    </ul>
+    <div class="highlight-box reveal d6">
+      <p>The best developers don't write more code. They ask better questions and review outputs critically.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SLIDE 16 — YOUR JOURNEY ======================== -->
+<section class="slide" id="slide-16">
+  <div class="v-line v-line-1 decorative"></div>
+  <span class="slide-num">16</span>
+  <span class="slide-label">Next Steps</span>
+  <div class="orange-header reveal d1">
+    <h2>Your Learning Path</h2>
+    <div class="sub-text">Where to go from here</div>
+  </div>
+  <div class="slide-body">
+    <div class="roadmap reveal d2">
+      <div class="stage">
+        <div class="stage-label">Stage 01</div>
+        <div class="stage-title">Beginner</div>
+        <ul class="stage-items">
+          <li>Install &amp; set up Claude Code</li>
+          <li>Complete your first 4 tasks</li>
+          <li>Learn to read tool calls</li>
+          <li>Try /help and /commit</li>
+        </ul>
+      </div>
+      <div class="stage active">
+        <div class="stage-label">Stage 02</div>
+        <div class="stage-title">Intermediate</div>
+        <ul class="stage-items">
+          <li>Work on a real project</li>
+          <li>Create your CLAUDE.md</li>
+          <li>Integrate with git</li>
+          <li>Build something you share</li>
+        </ul>
+      </div>
+      <div class="stage">
+        <div class="stage-label">Stage 03</div>
+        <div class="stage-title">Master</div>
+        <ul class="stage-items">
+          <li>Set up MCP servers</li>
+          <li>Write custom hooks</li>
+          <li>Build your own skills</li>
+          <li>Teach and mentor others</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box reveal d3" style="margin-top:clamp(0.5rem,1.2vw,1rem)">
+      <p>Start today. Open your terminal, type <strong>claude</strong>. Your first 10 minutes will teach you more than this entire presentation.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   Navigation, progress, reveal animations
+   =========================================== */
+class SlidePresentation {
+  constructor() {
+    this.slides = Array.from(document.querySelectorAll('.slide'));
+    this.total = this.slides.length;
+    this.current = 0;
+    this.progressBar = document.getElementById('progressBar');
+    this.navDotsContainer = document.getElementById('navDots');
+
+    this.setupNavDots();
+    this.setupIntersectionObserver();
+    this.setupKeyboardNav();
+    this.setupWheelNav();
+    this.setupTouchNav();
+    this.updateProgress(0);
+  }
+
+  /* Build right-side nav dots */
+  setupNavDots() {
+    this.dots = this.slides.map((_, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'nav-dot' + (i === 0 ? ' active' : '');
+      btn.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      btn.addEventListener('click', () => this.goTo(i));
+      this.navDotsContainer.appendChild(btn);
+      return btn;
+    });
+  }
+
+  /* Add .visible when slide enters viewport — triggers CSS reveal animations */
+  setupIntersectionObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          const idx = this.slides.indexOf(entry.target);
+          if (idx !== -1) {
+            this.current = idx;
+            this.updateProgress(idx);
+            this.updateDots(idx);
+          }
+        }
+      });
+    }, { threshold: 0.55 });
+
+    this.slides.forEach(slide => observer.observe(slide));
+  }
+
+  /* Arrow keys, Space, Page Up/Down */
+  setupKeyboardNav() {
+    document.addEventListener('keydown', (e) => {
+      if (['ArrowDown', 'ArrowRight', ' ', 'PageDown'].includes(e.key)) {
+        e.preventDefault();
+        this.goTo(this.current + 1);
+      } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) {
+        e.preventDefault();
+        this.goTo(this.current - 1);
+      }
+    });
+  }
+
+  /* Mouse wheel with debounce so one scroll = one slide */
+  setupWheelNav() {
+    let last = 0;
+    document.addEventListener('wheel', (e) => {
+      const now = Date.now();
+      if (now - last < 750) return;
+      last = now;
+      if (e.deltaY > 30) this.goTo(this.current + 1);
+      else if (e.deltaY < -30) this.goTo(this.current - 1);
+    }, { passive: true });
+  }
+
+  /* Touch swipe support */
+  setupTouchNav() {
+    let startY = 0;
+    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const delta = startY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 50) this.goTo(this.current + (delta > 0 ? 1 : -1));
+    }, { passive: true });
+  }
+
+  /* Scroll to a slide by index */
+  goTo(index) {
+    const target = Math.max(0, Math.min(this.total - 1, index));
+    if (target === this.current) return;
+    this.slides[target].scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* Thin orange progress bar at top */
+  updateProgress(index) {
+    const pct = this.total > 1 ? (index / (this.total - 1)) * 100 : 100;
+    if (this.progressBar) this.progressBar.style.width = pct + '%';
+  }
+
+  /* Highlight active dot */
+  updateDots(index) {
+    this.dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+  }
+}
+
+new SlidePresentation();
+</script>
+</body>
+</html>
